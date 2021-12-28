@@ -4,8 +4,6 @@ import 'regenerator-runtime/runtime';
 import * as model from './model.js';
 import recipeView from './views/recipeView.js';
 
-const recipeContainer = document.querySelector('.recipe');
-
 const controlRecipes = async function () {
   try {
     const id = window.location.hash.slice(1);
@@ -23,8 +21,7 @@ const controlRecipes = async function () {
   }
 };
 
-// window.addEventListener('hashchange', controlRecipes);
-// window.addEventListener('load', showRecipe);
-['hashchange', 'load'].forEach(event =>
-  window.addEventListener(event, controlRecipes)
-);
+const init = function() {
+  recipeView.addHandlerRender(controlRecipes);
+}
+init();

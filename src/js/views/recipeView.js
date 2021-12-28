@@ -5,6 +5,14 @@ class RecipeView {
   #parentElement = document.querySelector('.recipe');
   #data;
 
+  addHandlerRender(handler) {
+    // window.addEventListener('hashchange', controlRecipes);
+    // window.addEventListener('load', showRecipe);
+    ['hashchange', 'load'].forEach(event =>
+      window.addEventListener(event, handler)
+    );
+  }
+
   renderSpinner() {
     const markup = `
       <div class="spinner">
@@ -133,7 +141,6 @@ class RecipeView {
         </div>
       </li>`;
   }
-  
 }
 
 export default new RecipeView();
