@@ -19,7 +19,6 @@ const controlRecipes = async function () {
     recipeView.renderSpinner();
 
     await model.loadRecipe(id);
-    console.log(model.state.recipe);
 
     recipeView.render(model.state.recipe);
   } catch (error) {
@@ -29,12 +28,11 @@ const controlRecipes = async function () {
 
 const controlSearchResults = async function () {
   try {
-    resultsView.renderSpinner();
-
     // 1) Get search query
     const query = searchView.getQuery();
-    if (!query) return;
+    if (!query) throw new Error();
 
+    resultsView.renderSpinner();
     // 2) Load search results
     await model.loadSearchResults(query);
 
@@ -44,7 +42,7 @@ const controlSearchResults = async function () {
     // 4) Render initial pagination buttons
     paginationView.render(model.state.search);
   } catch (error) {
-    console.error(error);
+    resultsView.renderError();
   }
 };
 
@@ -55,8 +53,16 @@ const controlPagination = function (goToPage) {
   paginationView.render(model.state.search);
 };
 
+const controlServings = function (newServings) {
+  // Update the recipe servings (in state)
+  model.updateServings(newServings);
+  // Update the recipe view - PROBLEM: updates ALL the recipe view
+  recipeView.render(model.state.recipe);
+};
+
 const init = function () {
   recipeView.addHandlerRender(controlRecipes);
+  recipeView.addHandlerUpdateServings(controlServings);
   searchView.addHandlerSearch(controlSearchResults);
   paginationView.addHandlerClick(controlPagination);
 };
