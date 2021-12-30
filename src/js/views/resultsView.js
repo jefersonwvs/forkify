@@ -12,16 +12,20 @@ class ResultsView extends View {
   }
 
   // prettier-ignore
-  _generateMarkupPreview(recipe) {
+  _generateMarkupPreview(result) {
+
+    const id = window.location.hash.slice(1);
+
     return `
       <li class="preview">
-        <a class="preview__link" href="#${recipe.id}">
+        <a class="preview__link ${result.id === id ? 'preview__link--active' : ''}"
+           href="#${result.id}">
           <figure class="preview__fig">
-            <img src="${recipe.image}" alt="${recipe.title}" />
+            <img src="${result.image}" alt="${result.title}" />
           </figure>
           <div class="preview__data">
-            <h4 class="preview__title">${recipe.title}</h4>
-            <p class="preview__publisher">${recipe.publisher}</p>
+            <h4 class="preview__title">${result.title}</h4>
+            <p class="preview__publisher">${result.publisher}</p>
           </div>
         </a>
       </li>`;
