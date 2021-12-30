@@ -6,6 +6,10 @@ class BookmarksView extends View {
   _errorMessage = 'No recipes yet. Find a nice recipe and bookmark it ;)';
   _message = ''; // success message - for future uses
 
+  addHandlerRender(handler) {
+    window.addEventListener('load', handler);
+  }
+
   // prettier-ignore
   _generateMarkup() {
     return this._data.map(bookmark => previewView.render(bookmark, false)).join('');
