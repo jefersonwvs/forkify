@@ -26,13 +26,22 @@ class RecipeView extends View {
     });
   }
 
+  addHandlerAddBookmark(handler) {
+    this._parentElement.addEventListener('click', function (event) {
+      const btn = event.target.closest('.btn--bookmark');
+      if (!btn) return;
+      handler();
+    });
+  }
+
   // prettier-ignore
   _generateMarkup() {
+    const recipe = this._data;
     return `
       <figure class="recipe__fig">
-        <img src="${this._data.image}" alt="${this._data.title}" class="recipe__img" />
+        <img src="${recipe.image}" alt="${recipe.title}" class="recipe__img" />
         <h1 class="recipe__title">
-          <span>${this._data.title}</span>
+          <span>${recipe.title}</span>
         </h1>
       </figure>
 
@@ -42,7 +51,7 @@ class RecipeView extends View {
             <use href="${icons}#icon-clock"></use>
           </svg>
           <span class="recipe__info-data recipe__info-data--minutes">${
-            this._data.cookingTime
+            recipe.cookingTime
           }</span>
           <span class="recipe__info-text">minutes</span>
         </div>
@@ -51,19 +60,19 @@ class RecipeView extends View {
             <use href="${icons}#icon-users"></use>
           </svg>
           <span class="recipe__info-data recipe__info-data--people">${
-            this._data.servings
+            recipe.servings
           }</span>
           <span class="recipe__info-text">servings</span>
 
           <div class="recipe__info-buttons">
             <button class="btn--tiny btn--update-servings"
-                    data-update-to="${this._data.servings - 1}">
+                    data-update-to="${recipe.servings - 1}">
               <svg>
                 <use href="${icons}#icon-minus-circle"></use>
               </svg>
             </button>
             <button class="btn--tiny btn--update-servings"
-                    data-update-to="${this._data.servings + 1}">
+                    data-update-to="${recipe.servings + 1}">
               <svg>
                 <use href="${icons}#icon-plus-circle"></use>
               </svg>
@@ -73,9 +82,9 @@ class RecipeView extends View {
 
         <div class="recipe__user-generated">
         </div>
-        <button class="btn--round">
+        <button class="btn--round btn--bookmark">
           <svg class="">
-            <use href="${icons}#icon-bookmark-fill"></use>
+            <use href="${icons}#icon-bookmark${recipe.bookmarked ? '-fill' : ''}"></use>
           </svg>
         </button>
       </div>
@@ -83,7 +92,7 @@ class RecipeView extends View {
       <div class="recipe__ingredients">
         <h2 class="heading--2">Recipe ingredients</h2>
         <ul class="recipe__ingredient-list">
-          ${this._data.ingredients
+          ${recipe.ingredients
             .map(this._generateMarkupIngredients)
             .join('')}
         </ul>
@@ -94,13 +103,13 @@ class RecipeView extends View {
         <p class="recipe__directions-text">
           This recipe was carefully designed and tested by
           <span class="recipe__publisher">${
-            this._data.publisher
+            recipe.publisher
           }</span>. Please check out
           directions at their website.
         </p>
         <a
           class="btn--small recipe__btn"
-          href="${this._data.sourceUrl}"
+          href="${recipe.sourceUrl}"
           target="_blank"
         >
           <span>Directions</span>
