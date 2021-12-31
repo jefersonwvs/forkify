@@ -16,7 +16,29 @@ export const getJSON = async function (url) {
 
     if (!response.ok) throw new Error(`${json.message} (${response.status})`);
     return json;
-  
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const sendJSON = async function (url, data) {
+  try {
+    const request = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    };
+
+    const response = await Promise.race([
+      fetch(url, request),
+      timeout(TIMEOUT_SEC),
+    ]);
+    const json = await response.json();
+
+    if (!response.ok) throw new Error(`${json.message} (${response.status})`);
+    return json;
   } catch (error) {
     throw error;
   }
