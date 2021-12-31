@@ -1,6 +1,6 @@
 import { async } from 'regenerator-runtime';
 import { API_URL, KEY, RES_PER_PAGE } from './config.js';
-import { getJSON, sendJSON } from './helpers.js';
+import { AJAX } from './helpers.js';
 
 export const state = {
   recipe: {},
@@ -30,7 +30,7 @@ const createRecipeObject = function (response) {
 
 export const loadRecipe = async function (id) {
   try {
-    const response = await getJSON(`${API_URL}/${id}`);
+    const response = await AJAX(`${API_URL}/${id}?key=${KEY}`);
 
     state.recipe = createRecipeObject(response);
 
@@ -45,7 +45,7 @@ export const loadRecipe = async function (id) {
 export const loadSearchResults = async function (query) {
   try {
     state.recipe.query = query;
-    const json = await getJSON(`${API_URL}?search=${query}`);
+    const json = await AJAX(`${API_URL}?search=${query}&key=${KEY}`);
 
     state.search.results = json.data.recipes.map(recipe => {
       return {
@@ -53,6 +53,7 @@ export const loadSearchResults = async function (query) {
         title: recipe.title,
         publisher: recipe.publisher,
         image: recipe.image_url,
+        ...(recipe.key && { key: recipe.key }),
       };
     });
     state.search.page = 1;
@@ -107,7 +108,7 @@ export const uploadRecipe = async function (newRecipe) {
     const ingredients = Object.entries(newRecipe)
       .filter(entry => entry[0].startsWith('ingredient') && entry[1] !== '')
       .map(ingredient => {
-        const ingredientArray = ingredient[1].replaceAll(' ', '').split(',');
+        const ingredientArray = ingredient[1].split(',').map(ing => ing.trim());
         if (ingredientArray.length !== 3) {
           throw new Error(
             'Wrong ingredient format! Please use the correct format :)'
@@ -127,7 +128,7 @@ export const uploadRecipe = async function (newRecipe) {
       ingredients,
     };
 
-    const response = await sendJSON(`${API_URL}?key=${KEY}`, recipe);
+    const response = await AJAX(`${API_URL}?key=${KEY}`, recipe);
     state.recipe = createRecipeObject(response);
     addBookmark(state.recipe);
   } catch (error) {
